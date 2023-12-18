@@ -386,6 +386,7 @@
 
 #ifndef ACRO_LEVEL_MAX_OVERSHOOT
  # define ACRO_LEVEL_MAX_OVERSHOOT  1000 // maximum overshoot angle in trainer mode when full roll or pitch stick is held in centidegrees
+ # define ACRO_LEVEL_MAX_OVERSHOOT_ANGLELIMIT  500 // maximum overshoot angle in trainer mode (3:Angle limit only) when full roll or pitch stick is held in centidegrees
 #endif
 
 #ifndef ACRO_BALANCE_ROLL

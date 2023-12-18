@@ -129,7 +129,7 @@ void ModeAcro::get_pilot_desired_angle_rates(float roll_in, float pitch_in, floa
 
     // calculate earth frame rate corrections to pull the copter back to level while in ACRO mode
 
-    if (g.acro_trainer != (uint8_t)Trainer::OFF) {
+    if (g.acro_trainer != (uint8_t)Trainer::OFF && g.acro_trainer != (uint8_t)Trainer::LIMITED_ANGLE_ONLY) {
 
         // get attitude targets
         const Vector3f att_target = attitude_control->get_att_target_euler_cd();

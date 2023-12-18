@@ -390,6 +390,8 @@ public:
         OFF = 0,
         LEVELING = 1,
         LIMITED = 2,
+        LIMITED_ANGLE_ONLY = 3, // add for angle limit in AltholdRate mode
+
     };
 
     enum class AcroOptions {
@@ -501,6 +503,7 @@ public:
         OFF = 0,
         LEVELING = 1,
         LIMITED = 2,
+        LIMITED_ANGLE_ONLY = 3, // add for angle limit in AltholdRate mode
     };
 
     enum class AcroOptions {

@@ -194,11 +194,21 @@ void ModeAltHoldRate::get_pilot_desired_angle_rates(float roll_in, float pitch_i
 
         // Calculate trainer mode earth frame rate command for roll
         int32_t roll_angle = wrap_180_cd(att_target.x);
-        rate_ef_level_cd.x = -constrain_int32(roll_angle, -ACRO_LEVEL_MAX_ANGLE, ACRO_LEVEL_MAX_ANGLE) * g.acro_balance_roll;
+
+        // mod (angle limit)
+        if (g.acro_trainer != (uint8_t)Trainer::LIMITED_ANGLE_ONLY) {
+            rate_ef_level_cd.x = -constrain_int32(roll_angle, -ACRO_LEVEL_MAX_ANGLE, ACRO_LEVEL_MAX_ANGLE) * g.acro_balance_roll;
+        }
+        // mod (end)
 
         // Calculate trainer mode earth frame rate command for pitch
         int32_t pitch_angle = wrap_180_cd(att_target.y);
-        rate_ef_level_cd.y = -constrain_int32(pitch_angle, -ACRO_LEVEL_MAX_ANGLE, ACRO_LEVEL_MAX_ANGLE) * g.acro_balance_pitch;
+
+        // mod (angle limit)
+        if (g.acro_trainer != (uint8_t)Trainer::LIMITED_ANGLE_ONLY) {
+            rate_ef_level_cd.y = -constrain_int32(pitch_angle, -ACRO_LEVEL_MAX_ANGLE, ACRO_LEVEL_MAX_ANGLE) * g.acro_balance_pitch;
+        }
+        // mod (end)
 
         // Calculate trainer mode earth frame rate command for yaw
         rate_ef_level_cd.z = 0;
@@ -219,6 +229,23 @@ void ModeAltHoldRate::get_pilot_desired_angle_rates(float roll_in, float pitch_i
             }
         }
 
+        // mod (angle limit)
+        if (g.acro_trainer == (uint8_t)Trainer::LIMITED_ANGLE_ONLY) {
+            const float angle_max = copter.aparm.angle_max;
+            if (roll_angle > angle_max){
+                rate_ef_level_cd.x = sqrt_controller(angle_max - roll_angle, g2.command_model_acro_rp.get_rate() * 100.0 / ACRO_LEVEL_MAX_OVERSHOOT_ANGLELIMIT, attitude_control->get_accel_roll_max_cdss(), G_Dt);
+            }else if (roll_angle < -angle_max) {
+                rate_ef_level_cd.x = sqrt_controller(-angle_max - roll_angle, g2.command_model_acro_rp.get_rate() * 100.0 / ACRO_LEVEL_MAX_OVERSHOOT_ANGLELIMIT, attitude_control->get_accel_roll_max_cdss(), G_Dt);
+            }
+
+            if (pitch_angle > angle_max){
+                rate_ef_level_cd.y = sqrt_controller(angle_max - pitch_angle, g2.command_model_acro_rp.get_rate() * 100.0 / ACRO_LEVEL_MAX_OVERSHOOT_ANGLELIMIT, attitude_control->get_accel_pitch_max_cdss(), G_Dt);
+            }else if (pitch_angle < -angle_max) {
+                rate_ef_level_cd.y = sqrt_controller(-angle_max - pitch_angle, g2.command_model_acro_rp.get_rate() * 100.0 / ACRO_LEVEL_MAX_OVERSHOOT_ANGLELIMIT, attitude_control->get_accel_pitch_max_cdss(), G_Dt);
+            }
+        }
+        // mod (end)
+
         // convert earth-frame level rates to body-frame level rates
         attitude_control->euler_rate_to_ang_vel(attitude_control->get_att_target_euler_cd() * radians(0.01f), rate_ef_level_cd, rate_bf_level_cd);
 
@@ -227,7 +254,15 @@ void ModeAltHoldRate::get_pilot_desired_angle_rates(float roll_in, float pitch_i
             rate_bf_request_cd.x += rate_bf_level_cd.x;
             rate_bf_request_cd.y += rate_bf_level_cd.y;
             rate_bf_request_cd.z += rate_bf_level_cd.z;
-        }else{
+        }
+        // mod (angle limit)
+        else if (g.acro_trainer == (uint8_t)Trainer::LIMITED_ANGLE_ONLY){
+            rate_bf_request_cd.x += rate_bf_level_cd.x;
+            rate_bf_request_cd.y += rate_bf_level_cd.y;
+            rate_bf_request_cd.z += rate_bf_level_cd.z;
+        }
+        // mod (end)
+        else{
             float acro_level_mix = constrain_float(1-float(MAX(MAX(abs(roll_in), abs(pitch_in)), abs(yaw_in))/4500.0), 0, 1)*ahrs.cos_pitch();
 
             // Scale levelling rates by stick input
@@ -254,5 +289,13 @@ void ModeAltHoldRate::get_pilot_desired_angle_rates(float roll_in, float pitch_i
     roll_out = rate_bf_request_cd.x;
     pitch_out = rate_bf_request_cd.y;
     yaw_out = rate_bf_request_cd.z;
+
+    // mod
+    /*AP::logger().Write("OBAYASHI", "TimeUS,eflx,efly,troll,tpitch,GDt", "Qfffff", AP_HAL::micros64(),
+                                                                  rate_ef_level_cd.x,
+                                                                  rate_ef_level_cd.y,
+                                                                  roll_out,
+                                                                  pitch_out,
+                                                                  G_Dt); */
 }
 #endif
