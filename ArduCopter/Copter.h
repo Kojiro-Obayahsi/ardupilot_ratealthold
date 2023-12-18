@@ -204,6 +204,7 @@ public:
     friend class ModeAcro;
     friend class ModeAcro_Heli;
     friend class ModeAltHold;
+    friend class ModeAltHoldRate; // add for new mode (AltholdRate)
     friend class ModeAuto;
     friend class ModeAutoTune;
     friend class ModeAvoidADSB;
@@ -972,6 +973,7 @@ private:
 #endif
 #endif
     ModeAltHold mode_althold;
+    ModeAltHoldRate mode_altholdrate; // add for new mode (AltholdRate)
 #if MODE_AUTO_ENABLED == ENABLED
     ModeAuto mode_auto;
 #endif

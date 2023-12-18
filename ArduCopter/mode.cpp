@@ -49,6 +49,12 @@ Mode *Copter::mode_from_mode_num(const Mode::Number mode)
             ret = &mode_althold;
             break;
 
+        // add for new mode (AltholdRate)
+        case Mode::Number::ALTHOLD_RATE:
+            ret = &mode_altholdrate;
+            break;
+        // add (end)
+        
 #if MODE_AUTO_ENABLED == ENABLED
         case Mode::Number::AUTO:
             ret = &mode_auto;

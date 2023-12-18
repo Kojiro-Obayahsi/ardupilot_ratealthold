@@ -95,6 +95,7 @@ public:
         AUTOROTATE =   26,  // Autonomous autorotation
         AUTO_RTL =     27,  // Auto RTL, this is not a true mode, AUTO will report as this mode if entered to perform a DO_LAND_START Landing sequence
         TURTLE =       28,  // Flip over after crash
+        ALTHOLD_RATE = 50,  // (add new mode) manual body-frame angular rate with automatic throttle
 
         // Mode number 127 reserved for the "drone show mode" in the Skybrush
         // fork at https://github.com/skybrush-io/ardupilot
@@ -470,6 +471,60 @@ protected:
 private:
 
 };
+
+// add for new mode (AltholdRate)
+class ModeAltHoldRate : public Mode {
+
+public:
+    // inherit constructor
+    using Mode::Mode;
+    Number mode_number() const override { return Number::ALTHOLD_RATE; }
+
+    bool init(bool ignore_checks) override;
+    void run() override;
+
+    bool requires_GPS() const override { return false; }
+    bool has_manual_throttle() const override { return false; }
+    bool allows_arming(AP_Arming::Method method) const override { return true; };
+    bool is_autopilot() const override { return false; }
+    bool has_user_takeoff(bool must_navigate) const override {
+        return !must_navigate;
+    }
+    bool allows_autotune() const override { return true; }
+    bool allows_flip() const override { return true; }
+
+    // add from acro mode
+    void exit() override;
+    void air_mode_aux_changed();
+
+    enum class Trainer {
+        OFF = 0,
+        LEVELING = 1,
+        LIMITED = 2,
+    };
+
+    enum class AcroOptions {
+        AIR_MODE = 1 << 0,
+        RATE_LOOP_ONLY = 1 << 1,
+    };
+    // add from acro mode (end)
+
+protected:
+
+    // add from acro mode
+    // get_pilot_desired_angle_rates - transform pilot's normalised roll pitch and yaw input into a desired lean angle rates
+    // inputs are -1 to 1 and the function returns desired angle rates in centi-degrees-per-second
+    void get_pilot_desired_angle_rates(float roll_in, float pitch_in, float yaw_in, float &roll_out, float &pitch_out, float &yaw_out);
+    // add from acro mode (end)
+
+    const char *name() const override { return "ALTHOLD_RATE"; }
+    const char *name4() const override { return "AHRT"; }
+
+private:
+    bool disable_air_mode_reset;
+
+};
+// add (end)
 
 class ModeAuto : public Mode {
 
