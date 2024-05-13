@@ -1150,7 +1150,7 @@ bool AP_MotorsMatrix::setup_dodecahexa_matrix(motor_frame_type frame_type)
             add_motor_raw( 11,  0.5000, -0.1884,  0.5000, 12, 0.9375 ); // Motor12
         */
 
-        // SD-05-00 1/20 scale motor configuration (second)
+        /* SD-05-00 1/20 scale motor configuration (second)
         add_motor_raw(  0, -0.5000,  0.1646,  0.5000,  1, 0.9493 ); // Motor1
         add_motor_raw(  1, -0.5000, -0.1646, -0.5000,  2, 0.9493 ); // Motor2
         add_motor_raw(  2, -0.2118,  0.5000, -0.3948,  3, 0.9843 ); // Motor3
@@ -1163,6 +1163,21 @@ bool AP_MotorsMatrix::setup_dodecahexa_matrix(motor_frame_type frame_type)
         add_motor_raw(  9,  0.2118, -0.5000, -0.3948, 10, 0.9843 ); // Motor10
         add_motor_raw( 10,  0.5000,  0.1646, -0.5000, 11, 0.9493 ); // Motor11
         add_motor_raw( 11,  0.5000, -0.1646,  0.5000, 12, 0.9493 ); // Motor12
+        */
+        
+        // SD-05-00 1/6 scale motor configuration
+        add_motor_raw(  0, -0.5000,  0.2307,  0.5000,  1, 0.9493 ); // Motor1
+        add_motor_raw(  1, -0.5000, -0.2307, -0.5000,  2, 0.9493 ); // Motor2
+        add_motor_raw(  2, -0.2482,  0.5000, -0.1807,  3, 0.9843 ); // Motor3
+        add_motor_raw(  3, -0.2482, -0.5000,  0.1807,  4, 0.9843 ); // Motor4
+        add_motor_raw(  4, -0.2070,  0.1707,  0.2224,  5, 1.0000 ); // Motor5
+        add_motor_raw(  5, -0.2070, -0.1707, -0.2224,  6, 1.0000 ); // Motor6
+        add_motor_raw(  6,  0.2070,  0.1707, -0.2224,  7, 1.0000 ); // Motor7
+        add_motor_raw(  7,  0.2070, -0.1707,  0.2224,  8, 1.0000 ); // Motor8
+        add_motor_raw(  8,  0.2482,  0.5000,  0.1807,  9, 0.9843 ); // Motor9
+        add_motor_raw(  9,  0.2482, -0.5000, -0.1807, 10, 0.9843 ); // Motor10
+        add_motor_raw( 10,  0.5000,  0.2307, -0.5000, 11, 0.9493 ); // Motor11
+        add_motor_raw( 11,  0.5000, -0.2307,  0.5000, 12, 0.9493 ); // Motor12
         break;
     }
     default:
